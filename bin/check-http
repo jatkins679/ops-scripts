@@ -1,15 +1,53 @@
 #!/usr/bin/env bash
 
-# Name: check-http.sh
+# Name: check-http
 # Description: Repeatedly check an HTTP/HTTPS endpoint, display response
 #              headers, and report status, redirects, IP address, and timing.
 # Tags: network,http,https,curl,monitoring,troubleshooting,noc
-# Usage: ./check-http.sh [URL]
+# Usage: check-http [URL]
 # Platform: Linux, macOS
 # Requires: bash, curl
 # Updated: 2026-09-03
 
 # Make sure curl is installed.
+
+show_help() {
+    cat <<'EOF'
+check-http.sh - HTTP/HTTPS endpoint checker
+
+Usage:
+  check-http.sh [URL]
+  check-http.sh --help
+
+Description:
+  Repeatedly checks an HTTP or HTTPS endpoint.
+  Displays HTTP response headers and reports:
+
+    - final HTTP status
+    - final URL
+    - remote IP address
+    - redirect count
+    - connection time
+    - total response time
+
+Examples:
+  check-http.sh http://192.168.1.174:3001
+  check-http.sh https://example.com
+  check-http.sh
+
+Tags:
+  network, http, https, curl, monitoring, troubleshooting, noc
+
+Requires:
+  bash, curl
+EOF
+}
+
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+    show_help
+    exit 0
+fi
+
 if ! command -v curl >/dev/null 2>&1; then
     echo "Error: curl is not installed or not in PATH."
     exit 1

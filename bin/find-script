@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+# Name: find-script
+# Description: Search the ops-scripts library by name, description, or tags.
+# Tags: scripts,search,library,grep,automation
+# Usage: find-script SEARCH_TERM
+# Platform: Linux, macOS
+# Requires: bash, grep
+# Updated: 2026-09-03
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+if [[ $# -lt 1 ]]; then
+    echo "Usage: $(basename "$0") SEARCH_TERM"
+    echo
+    echo "Example:"
+    echo "  $(basename "$0") network"
+    exit 1
+fi
+
+mode="all"
+
+if [[ "${1:-}" == "--tag" ]]; then
+    mode="tag"
+    shift
+fi
+
+if [[ $# -lt 1 ]]; then
+    echo "Error: missing search term."
+    exit 1
+fi
+
+term="$1"
+
+echo "Searching script library for: $term"
+echo
+
+found=0
+
+for script in "$SCRIPT_DIR"/*.sh; do
+
+    [[ -e "$script" ]] || continue
+
+    if [[ "$mode" == "tag" ]]; then
+    grep -qi '^# Tags:.*'"$term" "$script"
+    matched=$?
+else
+    grep -qi "$term" "$script"
+    matched=$?
+fi
+
+if [[ "$matched" -eq 0 ]]; then
+
+        name=$(grep -m1 '^# Name:' "$script" | sed 's/^# Name:[[:space:]]*//')
+        description=$(grep -m1 '^# Description:' "$script" | sed 's/^# Description:[[:space:]]*//')
+        tags=$(grep -m1 '^# Tags:' "$script" | sed 's/^# Tags:[[:space:]]*//')
+
+        echo "$name"
+        echo "  $description"
+        echo "  Tags: $tags"
+        echo
+
+        found=1
+    fi
+
+done
+
+if [[ "$found" -eq 0 ]]; then
+    echo "No matching scripts found."
+fi
