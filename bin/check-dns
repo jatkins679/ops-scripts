@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# Name: check-dns
+# Description: Check DNS resolution and response timing.
+# Tags: dns,network,monitoring,troubleshooting,noc
+# Usage: check-dns HOSTNAME [DNS_SERVER]
+# Platform: Linux, macOS
+# Requires: bash, dig
+# Updated: 2026-09-24
+
+# Display usage information.
+if [[ $# -lt 1 || "${1:-}" == "--help" ]]; then
+    echo "Usage: check-dns HOSTNAME [DNS_SERVER]"
+    echo
+    echo "Examples:"
+    echo "  check-dns google.com"
+    echo "  check-dns google.com 192.168.1.20"
+    exit 0
+fi
+
+hostname="$1"
+dns_server="${2:-}"
+
+echo "DNS lookup for: $hostname"
+echo
+
+if [[ -n "$dns_server" ]]; then
+    dig "@$dns_server" "$hostname" A \
+        +noall +answer +comments +stats
+else
+    dig "$hostname" A \
+        +noall +answer +comments +stats
+fi

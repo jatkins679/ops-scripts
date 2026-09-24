@@ -5,6 +5,23 @@ A personal library of practical command-line scripts for Linux administration, n
 The goal of this repository is to build a collection of small, understandable tools that solve real operational problems while also reinforcing shell scripting skills.
 
 ## Scripts
+### `check-dns`
+
+Checks DNS resolution for a hostname using the system's default DNS resolver or a specified DNS server.
+
+Displays:
+
+- DNS response status (such as NOERROR or NXDOMAIN)
+- IPv4 address records
+- DNS server that answered the query
+- Query response time
+
+**Tags:** `dns`, `network`, `monitoring`, `troubleshooting`, `noc`
+
+Example using the system's default DNS resolver:
+
+```bash
+check-dns google.com
 
 ### `check-http`
 
