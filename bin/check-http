@@ -13,11 +13,11 @@
 
 show_help() {
     cat <<'EOF'
-check-http.sh - HTTP/HTTPS endpoint checker
+check-http - HTTP/HTTPS endpoint checker
 
 Usage:
-  check-http.sh [URL]
-  check-http.sh --help
+  check-http [URL]
+  check-http --help
 
 Description:
   Repeatedly checks an HTTP or HTTPS endpoint.
@@ -31,9 +31,9 @@ Description:
     - total response time
 
 Examples:
-  check-http.sh http://192.168.1.174:3001
-  check-http.sh https://example.com
-  check-http.sh
+  check-http http://192.168.1.174:3001
+  check-http https://example.com
+  check-http
 
 Tags:
   network, http, https, curl, monitoring, troubleshooting, noc

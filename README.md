@@ -53,6 +53,14 @@ Search only script tags:
 find-script --tag network
 ```
 
+Help:
+
+```bash
+find-script --help
+```
+
+The search includes scripts regardless of their filename extension.
+
 ## Repository Structure
 
 ```text

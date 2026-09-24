@@ -10,6 +10,24 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
+    cat <<'HELP'
+find-script - Search the ops-scripts library
+
+Usage:
+  find-script SEARCH_TERM
+  find-script --tag TAG
+  find-script --help
+
+Examples:
+  find-script http
+  find-script --tag network
+
+Searches script contents or metadata tags.
+HELP
+    exit 0
+fi
+
 if [[ $# -lt 1 ]]; then
     echo "Usage: $(basename "$0") SEARCH_TERM"
     echo
@@ -37,7 +55,7 @@ echo
 
 found=0
 
-for script in "$SCRIPT_DIR"/*.sh; do
+for script in "$SCRIPT_DIR"/*; do
 
     [[ -e "$script" ]] || continue
 
