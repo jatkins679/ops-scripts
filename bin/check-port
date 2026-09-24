@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+# Name: check-port
+# Description: Test TCP connectivity to a host and port.
+# Tags: network,tcp,ports,monitoring,troubleshooting,noc
+# Usage: check-port HOST PORT
+# Platform: Linux
+# Requires: bash, nc
+# Updated: 2026-09-24
+
+# Display help information.
+if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
+    echo "Usage: check-port HOST PORT"
+    echo
+    echo "Examples:"
+    echo "  check-port docker.corp.home.arpa 22"
+    echo "  check-port 192.168.1.174 443"
+    exit 0
+fi
+
+# Require exactly two arguments.
+if [[ $# -ne 2 ]]; then
+    echo "Error: HOST and PORT are required." >&2
+    echo "Usage: check-port HOST PORT" >&2
+    exit 2
+fi
+
+host="$1"
+port="$2"
+
+# Validate the TCP port number.
+if [[ ! "$port" =~ ^[0-9]+$ ]] ||
+   (( 10#$port < 1 || 10#$port > 65535 )); then
+    echo "Error: PORT must be between 1 and 65535." >&2
+    exit 2
+fi
+
+echo "Checking TCP connectivity..."
+echo "Host: $host"
+echo "Port: $port"
+echo
+
+if nc -zv -w 3 "$host" "$port"; then
+    echo
+    echo "SUCCESS: TCP connection established."
+    exit 0
+else
+    echo
+    echo "FAILED: TCP connection could not be established."
+    exit 1
+fi

@@ -5,6 +5,38 @@ A personal library of practical command-line scripts for Linux administration, n
 The goal of this repository is to build a collection of small, understandable tools that solve real operational problems while also reinforcing shell scripting skills.
 
 ## Scripts
+
+### `check-port`
+
+Tests whether a TCP port is reachable on a specified hostname or IP address.
+
+Displays the connection result and returns an exit code suitable for use in monitoring scripts and automation.
+
+**Tags:** `network`, `tcp`, `ports`, `monitoring`, `troubleshooting`, `noc`
+
+Examples:
+
+```bash
+check-port docker.corp.home.arpa 22
+check-port 192.168.1.174 443
+```
+
+Help:
+
+```bash
+check-port --help
+```
+
+**Exit codes:**
+
+- `0` — TCP connection succeeded.
+- `1` — TCP connection failed.
+- `2` — Invalid or missing arguments.
+
+**Requires:** Bash and OpenBSD netcat (`nc`).
+
+---
+
 ### `check-dns`
 
 Checks DNS resolution for a hostname using the system's default DNS resolver or a specified DNS server.
