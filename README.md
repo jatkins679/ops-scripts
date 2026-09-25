@@ -6,6 +6,48 @@ The goal of this repository is to build a collection of small, understandable to
 
 ## Scripts
 
+
+### `check-service`
+
+Checks the status and health of a Linux service managed by systemd.
+
+Displays:
+
+- Service type and current state
+- Startup configuration (enabled, disabled, or static)
+- Most recent execution result
+- Main process exit status
+- Service status and recent journal entries
+- Health assessment
+
+**Tags:** `linux`, `systemd`, `services`, `monitoring`, `troubleshooting`, `noc`
+
+Examples:
+
+```bash
+check-service ssh
+check-service apt-daily
+check-service docker
+```
+
+Help:
+
+```bash
+check-service --help
+```
+
+**Exit codes:**
+
+- `0` — Service is active, or an inactive oneshot service completed successfully.
+- `1` — Service is inactive or failed and does not meet the success conditions.
+- `2` — Invalid arguments or service not found.
+
+**Note:** An inactive service is not necessarily unhealthy. Some services are designed to run periodically or only when triggered. The health assessment reports the service's current systemd state and does not determine whether it is operating according to its intended schedule.
+
+**Requires:** Bash, systemd, `systemctl`, and `journalctl`.
+
+---
+
 ### `check-port`
 
 Tests whether a TCP port is reachable on a specified hostname or IP address.

@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+
+# Name: check-service
+# Description: Check systemd service health and recent logs.
+# Tags: linux,systemd,services,monitoring,troubleshooting,noc
+# Usage: check-service SERVICE
+# Platform: Linux (systemd)
+# Requires: bash, systemctl, journalctl
+# Updated: 2026-09-24
+
+# Display help information.
+if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
+    echo "Usage: check-service SERVICE"
+    echo
+    echo "Examples:"
+    echo "  check-service ssh"
+    echo "  check-service docker"
+    echo "  check-service qemu-guest-agent"
+    exit 0
+fi
+
+# Require exactly one argument.
+if [[ $# -ne 1 ]]; then
+    echo "Error: Exactly one service name is required." >&2
+    echo "Usage: check-service SERVICE" >&2
+    exit 2
+fi
+
+service="$1"
+
+# Check whether the service exists.
+if ! systemctl list-unit-files \
+    --type=service --no-legend "$service.service" |
+    grep -Fq "$service.service"; then
+    echo "Error: Service '$service' was not found." >&2
+    exit 2
+fi
+
+echo "========================================"
+echo "Service: $service"
+echo "========================================"
+
+echo
+echo "Systemd properties:"
+
+systemctl show "$service.service" \
+    -p Type \
+    -p ActiveState \
+    -p SubState \
+    -p Result \
+    -p ExecMainStatus \
+    -p TriggeredBy
+
+echo
+echo "Active state:"
+systemctl is-active "$service"
+
+echo
+echo "Startup configuration:"
+systemctl is-enabled "$service"
+
+echo
+echo "Service status:"
+systemctl status "$service" --no-pager --lines=0
+
+echo
+echo "Recent log entries:"
+journalctl -u "$service" -n 10 --no-pager
+
+# Determine the service health and set an exit code.
+echo
+echo "========================================"
+echo "Health assessment:"
+echo "========================================"
+
+active_state=$(systemctl show "$service.service" -p ActiveState --value)
+service_type=$(systemctl show "$service.service" -p Type --value)
+service_result=$(systemctl show "$service.service" -p Result --value)
+
+if [[ "$active_state" == "active" ]]; then
+    echo "OK: Service is active."
+    exit 0
+
+elif [[ "$service_type" == "oneshot" &&
+        "$active_state" == "inactive" &&
+        "$service_result" == "success" ]]; then
+    echo "OK: Oneshot service completed successfully."
+    exit 0
+
+else
+    echo "WARNING: Service is not active or has failed."
+    echo "State: $active_state"
+    echo "Result: $service_result"
+    exit 1
+fi
